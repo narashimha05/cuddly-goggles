@@ -15,7 +15,9 @@ const { nanoid } = require("nanoid");
 const { User, FriendRequest, Message } = require("./models");
 
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_me";
-const MONGO_URL = process.env.MONGO_URL || "mongodb://localhost:27017/devchat";
+const MONGO_URL =
+  process.env.MONGO_URL ||
+  "mongodb";
 const PORT = process.env.PORT || 3000;
 
 async function main() {

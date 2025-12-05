@@ -176,6 +176,21 @@ async function showfriends() {
   );
 }
 
+async function acceptrequest() {
+  const requestId = await prompt("Enter Request ID to accept: ");
+  try {
+    const res = await axios.post(
+      API + "/friend-request/accept",
+      { requestId },
+      { headers: { Authorization: "Bearer " + token } }
+    );
+    if (res.data.success) console.log("Friend request accepted.");
+    else console.log("Error:", res.data.error);
+  } catch (e) {
+    console.log("Error accepting request:", e.response?.data?.error || e.message);
+  }
+}
+
 async function online() {
   const res = await axios.get(API + "/friends/online", {
     headers: { Authorization: "Bearer " + token },
