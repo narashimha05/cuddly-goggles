@@ -360,13 +360,13 @@ async function main() {
       const msgs = await Message.find({ to: req.user.id }).sort({
         createdAt: 1,
       });
-        res.json({
-          messages: msgs.map((m) => ({
-            from: m.from ? `${m.from.username} (${m.from.userId})` : "Unknown",
-            text: m.text,
-            createdAt: m.createdAt
-          }))
-        });
+      res.json({
+        messages: msgs.map((m) => ({
+          from: m.from ? `${m.from.username} (${m.from.userId})` : "Unknown",
+          text: m.text,
+          createdAt: m.createdAt,
+        })),
+      });
     } catch (err) {
       console.error(err);
       res.status(500).json({ error: "Server error" });
