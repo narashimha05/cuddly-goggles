@@ -4,6 +4,9 @@ let socket = null;
 let chatCallback = null;
 let chatRequestCallback = null;
 let messageReadCallback = null;
+let chatPartnerOfflineCallback = null;
+let presenceCallback = null;
+let reminderCallback = null;
 
 function connectSocket(token) {
   if (socket) return socket;
@@ -29,6 +32,15 @@ function connectSocket(token) {
   socket.on("messageRead", (data) => {
     if (messageReadCallback) messageReadCallback(data);
   });
+  socket.on("chatPartnerOffline", (data) => {
+    if (chatPartnerOfflineCallback) chatPartnerOfflineCallback(data);
+  });
+  socket.on("presence", (data) => {
+    if (presenceCallback) presenceCallback(data);
+  });
+  socket.on("reminder", (data) => {
+    if (reminderCallback) reminderCallback(data);
+  });
   return socket;
 }
 
@@ -44,9 +56,28 @@ function onMessageRead(cb) {
   messageReadCallback = cb;
 }
 
+function onChatPartnerOffline(cb) {
+  chatPartnerOfflineCallback = cb;
+}
+
+function onPresence(cb) {
+  presenceCallback = cb;
+}
+
+function onReminder(cb) {
+  reminderCallback = cb;
+}
+
 function sendChatMessage(toUserId, text) {
   if (socket) {
     socket.emit("privateMessage", { toUserId, text });
+  }
+}
+
+function disconnectSocket() {
+  if (socket) {
+    socket.disconnect();
+    socket = null;
   }
 }
 
@@ -56,4 +87,8 @@ module.exports = {
   onChatRequest,
   sendChatMessage,
   onMessageRead,
+  onChatPartnerOffline,
+  onPresence,
+  onReminder,
+  disconnectSocket,
 };

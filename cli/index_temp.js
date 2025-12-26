@@ -83,33 +83,25 @@ let inboxMessages = []; // Store fetched inbox messages for /read and /reply
 let inboxOffset = 0; // Track how many messages we've shown
 
 // Theme Management System
-const THEME_FILE = path.join(__dirname, "theme.json");
+const THEME_FILE = path.join(__dirname, 'theme.json');
 let currentTheme = {};
 
 // Load theme configuration
 function loadTheme() {
   try {
     if (fs.existsSync(THEME_FILE)) {
-      const config = JSON.parse(fs.readFileSync(THEME_FILE, "utf8"));
-      const themeName = config.currentTheme || "default";
+      const config = JSON.parse(fs.readFileSync(THEME_FILE, 'utf8'));
+      const themeName = config.currentTheme || 'default';
       currentTheme = config.themes[themeName] || config.themes.default;
       return config;
     }
   } catch (e) {
-    console.log("Error loading theme:", e.message);
+    console.log('Error loading theme:', e.message);
   }
   // Return default theme if file doesn't exist or error
   currentTheme = {
-    username: "",
-    timestamp: "",
-    success: "",
-    error: "",
-    info: "",
-    warning: "",
-    border: "",
-    prompt: "",
-    highlight: "",
-    reset: "",
+    username: '', timestamp: '', success: '', error: '', info: '',
+    warning: '', border: '', prompt: '', highlight: '', reset: ''
   };
   return null;
 }
@@ -120,7 +112,7 @@ function saveTheme(config) {
     fs.writeFileSync(THEME_FILE, JSON.stringify(config, null, 2));
     return true;
   } catch (e) {
-    console.log("Error saving theme:", e.message);
+    console.log('Error saving theme:', e.message);
     return false;
   }
 }
@@ -221,9 +213,11 @@ async function inbox() {
       const timeAgo = getTimeAgo(new Date(m.createdAt));
       const preview =
         m.text.length > 50 ? m.text.substring(0, 50) + "..." : m.text;
-      const username = applyColor(`@${m.from.username}`, "username");
-      const timestamp = applyColor(`[${timeAgo}]`, "timestamp");
-      console.log(`  ${i + 1}. ${username} "${preview}" ${timestamp}`);
+      const username = applyColor(`@${m.from.username}`, 'username');
+      const timestamp = applyColor(`[${timeAgo}]`, 'timestamp');
+      console.log(
+        `  ${i + 1}. ${username} "${preview}" ${timestamp}`
+      );
     });
 
     inboxOffset = 7;
@@ -264,9 +258,11 @@ async function loadMore() {
     const timeAgo = getTimeAgo(new Date(m.createdAt));
     const preview =
       m.text.length > 50 ? m.text.substring(0, 50) + "..." : m.text;
-    const username = applyColor(`@${m.from.username}`, "username");
-    const timestamp = applyColor(`[${timeAgo}]`, "timestamp");
-    console.log(`  ${actualIndex + 1}. ${username} "${preview}" ${timestamp}`);
+    const username = applyColor(`@${m.from.username}`, 'username');
+    const timestamp = applyColor(`[${timeAgo}]`, 'timestamp');
+    console.log(
+      `  ${actualIndex + 1}. ${username} "${preview}" ${timestamp}`
+    );
   });
 
   inboxOffset += 7;
@@ -516,8 +512,8 @@ async function history(friendUserIdArg) {
     messages.forEach((m) => {
       const time = new Date(m.createdAt).toLocaleString();
       const sender = m.from === "me" ? `You` : `${m.username}`;
-      const colorType = m.from === "me" ? "success" : "username";
-      const timestamp = applyColor(`[${time}]`, "timestamp");
+      const colorType = m.from === "me" ? 'success' : 'username';
+      const timestamp = applyColor(`[${time}]`, 'timestamp');
       const senderText = applyColor(sender, colorType);
       console.log(`${timestamp} ${senderText}: ${m.text}`);
     });
@@ -1470,6 +1466,651 @@ async function removeGmail() {
 // ============================================
 
 // ============================================
+// ============================================
+
+  const subcommand = args[0];
+
+  if (!subcommand || subcommand === "help") {
+    return;
+  }
+
+  switch (subcommand) {
+    case "setup":
+      break;
+    case "create":
+      break;
+    case "today":
+      await listTodayEvents();
+      break;
+    case "week":
+      await listWeekEvents();
+      break;
+    case "list":
+      break;
+    case "view":
+      break;
+    case "update":
+      break;
+    case "delete":
+      break;
+    case "sync":
+      break;
+    case "status":
+      break;
+    case "settings":
+      break;
+    case "remove":
+      break;
+    default:
+  }
+}
+
+  console.log("2. OAuth 2.0 credentials (Client ID and Secret)");
+  console.log("3. A refresh token from OAuth flow\n");
+
+  console.log("📖 Quick Setup Guide:");
+  console.log("1. Go to: https://console.cloud.google.com/");
+  console.log("2. Create/select a project");
+  console.log("4. Create OAuth 2.0 credentials (Desktop app)");
+  console.log("5. Copy your Client ID and Client Secret");
+  console.log("6. Use OAuth playground to get refresh token:");
+  console.log("   https://developers.google.com/oauthplayground/");
+  console.log("   - Click settings, use your own OAuth credentials");
+  console.log("   - Exchange auth code for tokens\n");
+
+  console.log("💡 All credentials are encrypted and stored securely in your account.\n");
+
+  const clientId = await prompt("Google OAuth Client ID: ");
+  const clientSecret = await prompt("Google OAuth Client Secret: ");
+  const refreshToken = await prompt("OAuth Refresh Token: ");
+
+  if (!clientId.trim() || !clientSecret.trim() || !email.trim() || !refreshToken.trim()) {
+    console.log("Setup cancelled - all fields required.");
+    return;
+  }
+
+
+  try {
+    const res = await axios.post(
+      { 
+        clientId: clientId.trim(),
+        clientSecret: clientSecret.trim(),
+        email: email.trim(),
+        refreshToken: refreshToken.trim()
+      },
+      { headers: { Authorization: "Bearer " + token } }
+    );
+
+    console.log("✅", res.data.message);
+    console.log("💡 All credentials are stored encrypted in your account.");
+  } catch (e) {
+    console.log("❌ Error:", e.response?.data?.error || e.message);
+  }
+}
+
+
+  const title = await prompt("Event title: ");
+  if (!title.trim()) {
+    console.log("Title is required.");
+    return;
+  }
+
+  const description = await prompt("Description (optional): ");
+  const location = await prompt("Location (optional): ");
+
+  // Date and time prompts
+  console.log("\n📅 Event Date & Time");
+  console.log("Enter date in format: YYYY-MM-DD (e.g., 2025-12-31)");
+  const dateStr = await prompt("Date: ");
+
+  console.log("\nEnter time in 24-hour format: HH:MM (e.g., 14:30)");
+  const startTimeStr = await prompt("Start time: ");
+
+  let durationInput = await prompt("Duration in minutes (default: 60): ");
+  const duration = durationInput.trim() ? parseInt(durationInput) : 60;
+
+  // Parse date and time
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const [startHour, startMin] = startTimeStr.split(":").map(Number);
+
+  const startTime = new Date(year, month - 1, day, startHour, startMin);
+  const endTime = new Date(startTime.getTime() + duration * 60 * 1000);
+
+  // Validate dates
+  if (isNaN(startTime.getTime())) {
+    console.log("❌ Invalid date or time format.");
+    return;
+  }
+
+  // Timezone
+  const timezoneInput = await prompt(
+    "Timezone (default: UTC, e.g., America/New_York): "
+  );
+  const timezone = timezoneInput.trim() || "UTC";
+
+  // All-day event
+  const allDayInput = await prompt("All-day event? (y/n, default: n): ");
+  const allDay = allDayInput.toLowerCase() === "y";
+
+  // Reminders
+  console.log("\n⏰ Reminders");
+  const reminderInput = await prompt(
+    "Reminder before event in minutes (default: 15): "
+  );
+  const reminderMinutes = reminderInput.trim()
+    ? parseInt(reminderInput)
+    : 15;
+
+  const reminders = [{ method: "popup", minutes: reminderMinutes }];
+
+  // Recurring
+  const recurringInput = await prompt("Recurring event? (y/n, default: n): ");
+  const recurring = recurringInput.toLowerCase() === "y";
+  let recurrenceRule = "";
+
+  if (recurring) {
+    console.log("\n🔁 Recurrence Options:");
+    console.log("1. Daily");
+    console.log("2. Weekly");
+    console.log("3. Monthly");
+    console.log("4. Custom RRULE");
+    const recurChoice = await prompt("Choose (1-4): ");
+
+    switch (recurChoice) {
+      case "1":
+        recurrenceRule = "RRULE:FREQ=DAILY";
+        break;
+      case "2":
+        recurrenceRule = "RRULE:FREQ=WEEKLY";
+        break;
+      case "3":
+        recurrenceRule = "RRULE:FREQ=MONTHLY";
+        break;
+      case "4":
+        recurrenceRule = await prompt("Enter RRULE: ");
+        break;
+      default:
+        console.log("Invalid choice, skipping recurrence.");
+        recurring = false;
+    }
+  }
+
+  // Attendees (invite friends)
+  const inviteInput = await prompt(
+    "Invite DevChat friends? (y/n, default: n): "
+  );
+  const attendees = [];
+
+  if (inviteInput.toLowerCase() === "y") {
+    try {
+      const friendsRes = await axios.get(API + "/friends", {
+        headers: { Authorization: "Bearer " + token },
+      });
+
+      if (friendsRes.data.friends.length === 0) {
+        console.log("You have no friends to invite.");
+      } else {
+        console.log("\nYour Friends:");
+        friendsRes.data.friends.forEach((f, i) =>
+          console.log(`  ${i + 1}. ${f.username} (${f.email || "no email"})`)
+        );
+
+        const friendIds = await prompt(
+          "Enter friend numbers to invite (comma-separated): "
+        );
+        const indices = friendIds
+          .split(",")
+          .map((n) => parseInt(n.trim()) - 1);
+
+        indices.forEach((idx) => {
+          if (idx >= 0 && idx < friendsRes.data.friends.length) {
+            const friend = friendsRes.data.friends[idx];
+            attendees.push({
+              userId: friend._id,
+              email: friend.email,
+            });
+          }
+        });
+
+        console.log(`✓ ${attendees.length} friend(s) invited.`);
+      }
+    } catch (e) {
+      console.log("Error fetching friends:", e.message);
+    }
+  }
+
+
+  try {
+    const payload = {
+      title: title.trim(),
+      description: description.trim(),
+      location: location.trim(),
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
+      timezone,
+      allDay,
+      reminders,
+      recurring,
+      recurrenceRule,
+      attendees,
+    };
+
+      headers: { Authorization: "Bearer " + token },
+    });
+
+    console.log("✅", res.data.message);
+
+    if (res.data.googleEventLink) {
+    }
+
+    console.log("\n📋 Event Details:");
+    console.log(`  Title: ${title}`);
+    console.log(`  Start: ${startTime.toLocaleString()}`);
+    console.log(`  End: ${endTime.toLocaleString()}`);
+    console.log(`  Duration: ${duration} minutes`);
+    if (location.trim()) console.log(`  Location: ${location}`);
+    if (recurring) console.log(`  Recurring: ${recurrenceRule}`);
+    if (attendees.length > 0)
+      console.log(`  Attendees: ${attendees.length} invited`);
+  } catch (e) {
+    console.log("❌ Error:", e.response?.data?.error || e.message);
+  }
+}
+
+async function listTodayEvents() {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+      headers: { Authorization: "Bearer " + token },
+      params: {
+        from: today.toISOString(),
+        to: tomorrow.toISOString(),
+      },
+    });
+
+    const events = res.data.events;
+
+    if (events.length === 0) {
+      console.log("\n📅 No events scheduled for today.");
+      return;
+    }
+
+    console.log(`\n📅 Today's Events (${events.length}):\n`);
+
+    events.forEach((e, i) => {
+      const start = new Date(e.startTime);
+      const end = new Date(e.endTime);
+      const time = e.allDay
+        ? "All day"
+        : `${start.toLocaleTimeString()} - ${end.toLocaleTimeString()}`;
+
+      console.log(`${i + 1}. ${e.title}`);
+      console.log(`   Time: ${time}`);
+      if (e.location) console.log(`   Location: ${e.location}`);
+      if (e.description) console.log(`   Note: ${e.description}`);
+      console.log(`   ID: ${e._id}`);
+      console.log();
+    });
+  } catch (e) {
+    console.log("❌ Error:", e.response?.data?.error || e.message);
+  }
+}
+
+async function listWeekEvents() {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const nextWeek = new Date(today);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+
+      headers: { Authorization: "Bearer " + token },
+      params: {
+        from: today.toISOString(),
+        to: nextWeek.toISOString(),
+      },
+    });
+
+    const events = res.data.events;
+
+    if (events.length === 0) {
+      console.log("\n📅 No events scheduled for this week.");
+      return;
+    }
+
+    console.log(`\n📅 This Week's Events (${events.length}):\n`);
+
+    events.forEach((e, i) => {
+      const start = new Date(e.startTime);
+      const end = new Date(e.endTime);
+      const dateStr = start.toLocaleDateString();
+      const time = e.allDay
+        ? "All day"
+        : `${start.toLocaleTimeString()} - ${end.toLocaleTimeString()}`;
+
+      console.log(`${i + 1}. ${e.title} - ${dateStr}`);
+      console.log(`   Time: ${time}`);
+      if (e.location) console.log(`   Location: ${e.location}`);
+      console.log(`   ID: ${e._id}\n`);
+    });
+  } catch (e) {
+    console.log("❌ Error:", e.response?.data?.error || e.message);
+  }
+}
+
+  try {
+    const limitInput = await prompt("How many events to show? (default: 20): ");
+    const limit = limitInput.trim() ? parseInt(limitInput) : 20;
+
+      headers: { Authorization: "Bearer " + token },
+      params: { limit },
+    });
+
+    const events = res.data.events;
+
+    if (events.length === 0) {
+      console.log("\n📅 No upcoming events.");
+      return;
+    }
+
+    console.log(`\n📅 Upcoming Events (${events.length}):\n`);
+
+    events.forEach((e, i) => {
+      const start = new Date(e.startTime);
+      const dateStr = start.toLocaleDateString();
+      const timeStr = start.toLocaleTimeString();
+
+      console.log(`${i + 1}. ${e.title}`);
+      console.log(`   When: ${dateStr} at ${timeStr}`);
+      if (e.location) console.log(`   Where: ${e.location}`);
+      if (e.syncedToGoogle) console.log("   ✓ Synced to Google");
+      console.log(`   ID: ${e._id}\n`);
+    });
+
+  } catch (e) {
+    console.log("❌ Error:", e.response?.data?.error || e.message);
+  }
+}
+
+  if (!eventId) {
+    eventId = await prompt("Enter event ID: ");
+  }
+
+  try {
+      headers: { Authorization: "Bearer " + token },
+    });
+
+    const e = res.data.event;
+    const start = new Date(e.startTime);
+    const end = new Date(e.endTime);
+
+    console.log("\n━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log("📅 EVENT DETAILS");
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━");
+    console.log(`\nTitle: ${e.title}`);
+    console.log(`Start: ${start.toLocaleString()}`);
+    console.log(`End: ${end.toLocaleString()}`);
+    console.log(`Duration: ${Math.round((end - start) / 60000)} minutes`);
+    if (e.description) console.log(`Description: ${e.description}`);
+    if (e.location) console.log(`Location: ${e.location}`);
+    console.log(`Timezone: ${e.timezone}`);
+    console.log(`All-day: ${e.allDay ? "Yes" : "No"}`);
+
+    if (e.recurring) {
+      console.log(`Recurring: Yes`);
+      console.log(`Rule: ${e.recurrenceRule}`);
+    }
+
+    if (e.attendees && e.attendees.length > 0) {
+      console.log(`\nAttendees (${e.attendees.length}):`);
+      e.attendees.forEach((a) => {
+        const user = a.userId;
+        console.log(
+          `  - ${user?.username || a.email} (${a.status || "pending"})`
+        );
+      });
+    }
+
+    if (e.reminders && e.reminders.length > 0) {
+      console.log(`\nReminders:`);
+      e.reminders.forEach((r) => {
+        console.log(`  - ${r.method}: ${r.minutes} minutes before`);
+      });
+    }
+
+    console.log(`\nStatus: ${e.status}`);
+    console.log(
+      `Synced to Google: ${e.syncedToGoogle ? "Yes" : "No"}`
+    );
+    console.log(`Created: ${new Date(e.createdAt).toLocaleString()}`);
+    console.log(`\nEvent ID: ${e._id}`);
+    console.log("━━━━━━━━━━━━━━━━━━━━━━━━\n");
+  } catch (e) {
+    console.log("❌ Error:", e.response?.data?.error || e.message);
+  }
+}
+
+  if (!eventId) {
+    eventId = await prompt("Enter event ID to update: ");
+  }
+
+  try {
+    // First fetch the event
+      headers: { Authorization: "Bearer " + token },
+    });
+
+    const event = eventRes.data.event;
+
+    console.log("\n=== UPDATE EVENT ===");
+    console.log(`Current: ${event.title}\n`);
+    console.log("Leave blank to keep current value\n");
+
+    const title = await prompt(`New title (${event.title}): `);
+    const description = await prompt(
+      `New description (${event.description || "none"}): `
+    );
+    const location = await prompt(
+      `New location (${event.location || "none"}): `
+    );
+
+    const updates = {};
+    if (title.trim()) updates.title = title.trim();
+    if (description.trim()) updates.description = description.trim();
+    if (location.trim()) updates.location = location.trim();
+
+    if (Object.keys(updates).length === 0) {
+      console.log("No changes made.");
+      return;
+    }
+
+    const res = await axios.put(
+      updates,
+      { headers: { Authorization: "Bearer " + token } }
+    );
+
+    console.log("✅", res.data.message);
+  } catch (e) {
+    console.log("❌ Error:", e.response?.data?.error || e.message);
+  }
+}
+
+  if (!eventId) {
+    eventId = await prompt("Enter event ID to delete: ");
+  }
+
+  const confirm = await prompt(
+    "Delete this event? Type 'YES' to confirm: "
+  );
+  if (confirm !== "YES") {
+    console.log("Cancelled.");
+    return;
+  }
+
+  try {
+      headers: { Authorization: "Bearer " + token },
+    });
+
+    console.log("✅", res.data.message);
+  } catch (e) {
+    console.log("❌ Error:", e.response?.data?.error || e.message);
+  }
+}
+
+
+  if (!reminderId) {
+    // Show reminders first
+    try {
+      const res = await axios.get(API + "/reminders", {
+        headers: { Authorization: "Bearer " + token },
+      });
+
+      if (res.data.reminders.length === 0) {
+        console.log("You have no reminders to sync.");
+        return;
+      }
+
+      console.log("Your Reminders:");
+      res.data.reminders.forEach((r, i) => {
+        console.log(`  ${i + 1}. ${r.text}`);
+        console.log(`     ID: ${r._id}\n`);
+      });
+
+      reminderId = await prompt("Enter reminder ID to sync: ");
+    } catch (e) {
+      console.log("Error fetching reminders:", e.message);
+      return;
+    }
+  }
+
+  // Get event details for the reminder
+  console.log("\n📅 Event Details for Reminder\n");
+
+  console.log("Enter date in format: YYYY-MM-DD (e.g., 2025-12-31)");
+  const dateStr = await prompt("Date: ");
+
+  console.log("\nEnter time in 24-hour format: HH:MM (e.g., 14:30)");
+  const timeStr = await prompt("Start time: ");
+
+  const durationInput = await prompt("Duration in minutes (default: 60): ");
+  const duration = durationInput.trim() ? parseInt(durationInput) : 60;
+
+  const location = await prompt("Location (optional): ");
+  const description = await prompt("Additional description (optional): ");
+
+  // Parse date and time
+  const [year, month, day] = dateStr.split("-").map(Number);
+  const [hour, min] = timeStr.split(":").map(Number);
+  const startTime = new Date(year, month - 1, day, hour, min);
+
+  if (isNaN(startTime.getTime())) {
+    console.log("❌ Invalid date or time format.");
+    return;
+  }
+
+
+  try {
+    const payload = {
+      startTime: startTime.toISOString(),
+      duration,
+      location: location.trim(),
+      description: description.trim(),
+    };
+
+    const res = await axios.post(
+      payload,
+      { headers: { Authorization: "Bearer " + token } }
+    );
+
+    console.log("✅", res.data.message);
+
+    if (res.data.googleEventLink) {
+    }
+  } catch (e) {
+    console.log("❌ Error:", e.response?.data?.error || e.message);
+  }
+}
+
+  try {
+      headers: { Authorization: "Bearer " + token },
+    });
+
+    if (res.data.configured) {
+      if (res.data.incomplete) {
+        console.log("⚠️  Partially configured (missing OAuth credentials)");
+        console.log(`📧 Account: ${res.data.email}`);
+        console.log(`🔄 Auto-sync: ${res.data.autoSync ? "Enabled" : "Disabled"}`);
+        console.log("\n❌ Google sync will fail!");
+        console.log("   1. Client ID");
+        console.log("   2. Client Secret");
+        console.log("   3. Email");
+        console.log("   4. Refresh Token");
+      } else {
+        console.log("✅ Fully connected");
+        console.log(`📧 Account: ${res.data.email}`);
+        console.log(`🔄 Auto-sync: ${res.data.autoSync ? "Enabled" : "Disabled"}`);
+      }
+    } else {
+      console.log("❌ Not configured");
+    }
+  } catch (e) {
+    console.log("❌ Error:", e.response?.data?.error || e.message);
+  }
+}
+
+
+  const autoSyncInput = await prompt(
+  );
+  const autoSync = autoSyncInput.toLowerCase() === "y";
+
+  const durationInput = await prompt(
+    "Default event duration in minutes (default: 60): "
+  );
+  const defaultDuration = durationInput.trim()
+    ? parseInt(durationInput)
+    : 60;
+
+  const reminderInput = await prompt(
+    "Default reminder before event in minutes (default: 15): "
+  );
+  const defaultReminder = reminderInput.trim()
+    ? parseInt(reminderInput)
+    : 15;
+
+  try {
+    const res = await axios.post(
+      { autoSync, defaultDuration, defaultReminder },
+      { headers: { Authorization: "Bearer " + token } }
+    );
+
+    console.log("✅", res.data.message);
+  } catch (e) {
+    console.log("❌ Error:", e.response?.data?.error || e.message);
+  }
+}
+
+  const confirm = await prompt(
+  );
+  if (confirm.toLowerCase() !== "y") {
+    console.log("Cancelled.");
+    return;
+  }
+
+  try {
+      headers: { Authorization: "Bearer " + token },
+    });
+
+    console.log("✅", res.data.message);
+  } catch (e) {
+    console.log("❌ Error:", e.response?.data?.error || e.message);
+  }
+}
+
+// ============================================
+// ============================================
 
 // ============================================
 // THEME CUSTOMIZATION FUNCTIONS
@@ -1554,9 +2195,7 @@ async function showCurrentTheme() {
     console.log("Color Preview:");
     console.log(`  Username: ${applyColor("@johndoe", "username")}`);
     console.log(`  Timestamp: ${applyColor("[2 minutes ago]", "timestamp")}`);
-    console.log(
-      `  Success: ${applyColor("✓ Operation successful", "success")}`
-    );
+    console.log(`  Success: ${applyColor("✓ Operation successful", "success")}`);
     console.log(`  Error: ${applyColor("✗ Operation failed", "error")}`);
     console.log(`  Info: ${applyColor("ℹ Information message", "info")}`);
     console.log(`  Warning: ${applyColor("⚠ Warning message", "warning")}`);
@@ -1633,9 +2272,7 @@ async function previewTheme(themeName) {
     console.log("Example output:");
     console.log(`  Username: ${applyColor("@johndoe", "username")}`);
     console.log(`  Timestamp: ${applyColor("[2 minutes ago]", "timestamp")}`);
-    console.log(
-      `  Success: ${applyColor("✓ Operation successful", "success")}`
-    );
+    console.log(`  Success: ${applyColor("✓ Operation successful", "success")}`);
     console.log(`  Error: ${applyColor("✗ Operation failed", "error")}`);
     console.log(`  Info: ${applyColor("ℹ Information message", "info")}`);
     console.log(`  Warning: ${applyColor("⚠ Warning message", "warning")}`);
@@ -1685,9 +2322,7 @@ async function customizeTheme() {
   ];
 
   for (const field of fields) {
-    const value = await prompt(
-      `${field} color (current: "${custom[field] || "none"}"): `
-    );
+    const value = await prompt(`${field} color (current: "${custom[field] || "none"}"): `);
     if (value.trim()) {
       custom[field] = value.replace(/\\x1b/g, "\x1b");
     }

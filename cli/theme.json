@@ -1,0 +1,96 @@
+{
+  "currentTheme": "forest",
+  "themes": {
+    "default": {
+      "name": "Default (No Colors)",
+      "username": "",
+      "timestamp": "",
+      "success": "",
+      "error": "",
+      "info": "",
+      "warning": "",
+      "border": "",
+      "prompt": "",
+      "highlight": "",
+      "reset": ""
+    },
+    "dark": {
+      "name": "Dark Theme",
+      "username": "\u001b[36m",
+      "timestamp": "\u001b[90m",
+      "success": "\u001b[32m",
+      "error": "\u001b[31m",
+      "info": "\u001b[34m",
+      "warning": "\u001b[33m",
+      "border": "\u001b[90m",
+      "prompt": "\u001b[35m",
+      "highlight": "\u001b[1m\u001b[37m",
+      "reset": "\u001b[0m"
+    },
+    "light": {
+      "name": "Light Theme",
+      "username": "\u001b[94m",
+      "timestamp": "\u001b[90m",
+      "success": "\u001b[92m",
+      "error": "\u001b[91m",
+      "info": "\u001b[96m",
+      "warning": "\u001b[93m",
+      "border": "\u001b[37m",
+      "prompt": "\u001b[95m",
+      "highlight": "\u001b[1m\u001b[30m",
+      "reset": "\u001b[0m"
+    },
+    "ocean": {
+      "name": "Ocean Theme",
+      "username": "\u001b[36m",
+      "timestamp": "\u001b[34m",
+      "success": "\u001b[32m",
+      "error": "\u001b[35m",
+      "info": "\u001b[96m",
+      "warning": "\u001b[93m",
+      "border": "\u001b[34m",
+      "prompt": "\u001b[36m",
+      "highlight": "\u001b[1m\u001b[96m",
+      "reset": "\u001b[0m"
+    },
+    "forest": {
+      "name": "Forest Theme",
+      "username": "\u001b[32m",
+      "timestamp": "\u001b[90m",
+      "success": "\u001b[92m",
+      "error": "\u001b[91m",
+      "info": "\u001b[36m",
+      "warning": "\u001b[33m",
+      "border": "\u001b[32m",
+      "prompt": "\u001b[92m",
+      "highlight": "\u001b[1m\u001b[32m",
+      "reset": "\u001b[0m"
+    },
+    "sunset": {
+      "name": "Sunset Theme",
+      "username": "\u001b[35m",
+      "timestamp": "\u001b[90m",
+      "success": "\u001b[32m",
+      "error": "\u001b[31m",
+      "info": "\u001b[33m",
+      "warning": "\u001b[93m",
+      "border": "\u001b[35m",
+      "prompt": "\u001b[95m",
+      "highlight": "\u001b[1m\u001b[33m",
+      "reset": "\u001b[0m"
+    },
+    "custom": {
+      "name": "Custom Theme",
+      "username": "",
+      "timestamp": "",
+      "success": "",
+      "error": "",
+      "info": "",
+      "warning": "",
+      "border": "",
+      "prompt": "",
+      "highlight": "",
+      "reset": ""
+    }
+  }
+}
